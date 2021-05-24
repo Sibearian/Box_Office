@@ -1,20 +1,28 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-function App() {
-	return (
+// Importing Components
+import Navis from './Components/Navis';
+
+// Importing pages
+import Home from './Pages/Home';
+import Starred from './Pages/Starred';
+
+const App = () => (
+	<div>
+		<Navis />
 		<Switch>
 			<Route exact path="/">
-				This Is Home Page
+				<Home />
 			</Route>
-			<Route exact path="/start">
-				This Is Start
+			<Route exact path="/starred">
+				<Starred />
 			</Route>
 			<Route>
-				<h2>404</h2>
+				<div>Not Found 404</div>
 			</Route>
 		</Switch>
-	);
-}
+	</div>
+);
 
 export default App;
