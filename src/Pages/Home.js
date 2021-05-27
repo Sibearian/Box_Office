@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import ActorGrid from '../Components/Actor/ActorGrid';
 import MainPageLayout from '../Components/MainPageLayout';
+import ShowGrid from '../Components/Show/ShowGrid';
 import { apiGet } from '../Misc/Config';
 
 const Home = () => {
@@ -31,15 +33,11 @@ const Home = () => {
 		}
 
 		if (results && results.length >= 0) {
-			return results[0].show
-				? results.map(item => <div key={item.show.id}> {item.show.name} </div>)
-				: results.map(item => (
-						<div key={item.person.id}> {item.person.name} </div>
-				  ));
-
-			// results.map(item => {
-			// 	return <div key={item[0].id}> {item[0].name} </div>;
-			// })
+			return results[0].show ? (
+				<ShowGrid data={results} />
+			) : (
+				<ActorGrid data={results} />
+			);
 		}
 		return null;
 	};
@@ -58,7 +56,7 @@ const Home = () => {
 				value={input}
 			/>
 			<div>
-				<lable htmlFor="shows-search">
+				<label htmlFor="shows-search">
 					shows
 					<input
 						type="radio"
@@ -67,8 +65,8 @@ const Home = () => {
 						onChange={onRadioChange}
 						checked={isShowChecked}
 					/>
-				</lable>
-				<lable htmlFor="actors-search">
+				</label>
+				<label htmlFor="actors-search">
 					Actors
 					<input
 						type="radio"
@@ -77,7 +75,7 @@ const Home = () => {
 						onChange={onRadioChange}
 						checked={!isShowChecked}
 					/>
-				</lable>
+				</label>
 			</div>
 			<button type="button" onClick={onSearch}>
 				Search
