@@ -1,5 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import React, { useEffect, useReducer } from 'react';
 import { useParams } from 'react-router';
+
+import Cast from '../Components/Show/Cast';
+import Details from '../Components/Show/Details';
+import Seasons from '../Components/Show/Seasons';
+import ShowMainData from '../Components/Show/ShowMainData';
 import { apiGet } from '../Misc/Config';
 
 const initialState = {
@@ -29,10 +35,6 @@ const Show = () => {
 		initialState
 	);
 
-	// const [isLoading, setIsLoading] = useState(true);
-	// const [show, setShow] = useState(null);
-	// const [errors, setErrors] = useState(null);
-
 	useEffect(() => {
 		let isMounted = true;
 		apiGet(`/shows/${id}?embed[]=seasons&embed[]=cast`)
@@ -60,9 +62,37 @@ const Show = () => {
 		return <div>{errors}</div>;
 	}
 
-	console.log({ show, isLoading, errors });
 
-	return <div>show</div>;
+	return (
+		<div>
+			<ShowMainData
+				image={show.image}
+				name={show.name}
+				rating={show.rating}
+				summary={show.summary}
+				tags={show.genres}
+			/>
+
+			<div>
+				<h2>Details</h2>
+				<Details
+					status={show.status}
+					network={show.network}
+					premiered={show.premiered}
+				/>
+			</div>
+
+			<div>
+				<h2>Seasons</h2>
+				<Seasons seasons={show._embedded.seasons} />
+			</div>
+
+			<div>
+				<h2>Cast</h2>
+				<Cast cast={show._embedded.cast}  />
+			</div>
+		</div>
+	);
 };
 
 export default Show;
