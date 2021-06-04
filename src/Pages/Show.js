@@ -1,68 +1,24 @@
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect, useReducer } from 'react';
-import { useParams } from 'react-router';
-
-import Cast from '../Components/Show/Cast';
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import ShowMainData from '../Components/Show/ShowMainData';
 import Details from '../Components/Show/Details';
 import Seasons from '../Components/Show/Seasons';
-import ShowMainData from '../Components/Show/ShowMainData';
-import { apiGet } from '../Misc/Config';
-import { InfoBlock, ShowPageWrapper } from './Show.styled';
-
-const initialState = {
-	show: null,
-	isLoading: true,
-	error: null,
-};
-
-const reducer = (prevState, action) => {
-	switch (action.type) {
-		case 'FETCH_SUCCESS':
-			return { show: action.show, isLoading: false, error: null };
-
-		case 'FETCH_FAILED':
-			return { ...prevState, isLoading: false, error: action.error };
-
-		default:
-			return prevState;
-	}
-};
+import Cast from '../Components/Show/Cast';
+import { ShowPageWrapper, InfoBlock } from './Show.styled';
+import { useShow } from '../Misc/costom-hooks';
 
 const Show = () => {
 	const { id } = useParams();
-
-	const [{ show, isLoading, error: errors }, dispatch] = useReducer(
-		reducer,
-		initialState
-	);
-
-	useEffect(() => {
-		let isMounted = true;
-		apiGet(`/shows/${id}?embed[]=seasons&embed[]=cast`)
-			.then(r => {
-				if (isMounted) {
-					dispatch({ type: 'FETCH_SUCCESS', show: r });
-				}
-			})
-			.catch(err => {
-				if (isMounted) {
-					dispatch({ type: 'FETCH_FAILED', error: err.message });
-				}
-			});
-
-		return () => {
-			isMounted = false;
-		};
-	}, [id]);
+	const { show, isLoading, error } = useShow(id);
 
 	if (isLoading) {
-		return <div>Please wait, page is loading</div>;
+		return <div>Data is being loaded</div>;
 	}
 
-	if (errors !== null) {
-		return <div>{errors}</div>;
+	if (error) {
+		return <div>Error occured: {error}</div>;
 	}
-
 
 	return (
 		<ShowPageWrapper>
@@ -90,7 +46,7 @@ const Show = () => {
 
 			<InfoBlock>
 				<h2>Cast</h2>
-				<Cast cast={show._embedded.cast}  />
+				<Cast cast={show._embedded.cast} />
 			</InfoBlock>
 		</ShowPageWrapper>
 	);
